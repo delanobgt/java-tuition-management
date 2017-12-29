@@ -18,7 +18,6 @@ import javax.swing.JLabel;
 public class LoginFrame extends javax.swing.JFrame {
 
     private int relativeX = -1, relativeY = -1; 
-    private String password = "";
     
     /**
      * Creates new form LoginFrame
@@ -33,7 +32,8 @@ public class LoginFrame extends javax.swing.JFrame {
         String user = usernameTextField.getText();
         String pass = jPasswordField.getText();
         if (user.equals("root") && pass.equals("root")) {
-            System.out.printf("%s %s\n", user, pass);
+            this.setVisible(false);
+            MainFrame.createAndShowGUI();
         }
     }
     
@@ -155,31 +155,27 @@ public class LoginFrame extends javax.swing.JFrame {
         rightPanel.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 232, -1, -1));
 
         titleLabel.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        titleLabel.setForeground(new java.awt.Color(54, 169, 112));
-        titleLabel.setText("Hello, Handsome!");
+        titleLabel.setForeground(new java.awt.Color(0, 204, 204));
+        titleLabel.setText("Hello, coach!");
         titleLabel.setToolTipText("");
-        rightPanel.add(titleLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 60, -1, -1));
+        rightPanel.add(titleLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 90, -1, -1));
 
-        loginButton.setBackground(new java.awt.Color(255, 255, 255));
+        loginButton.setBackground(new java.awt.Color(0, 204, 204));
         loginButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        loginButton.setForeground(new java.awt.Color(54, 169, 112));
+        loginButton.setForeground(new java.awt.Color(255, 255, 255));
         loginButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         loginButton.setText("LOGIN");
-        loginButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(54, 169, 112), 2));
         loginButton.setOpaque(true);
-        loginButton.setPreferredSize(new java.awt.Dimension(200, 35));
+        loginButton.setPreferredSize(new java.awt.Dimension(200, 30));
         loginButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                loginButtonMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 loginButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 loginButtonMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                loginButtonMousePressed(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                loginButtonMouseReleased(evt);
             }
         });
         rightPanel.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 260, -1, -1));
@@ -188,7 +184,6 @@ public class LoginFrame extends javax.swing.JFrame {
         closeButton.setFont(new java.awt.Font("Segoe UI Semibold", 0, 11)); // NOI18N
         closeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/icons8_Multiply_25px_1.png"))); // NOI18N
         closeButton.setOpaque(true);
-        closeButton.setPreferredSize(new java.awt.Dimension(25, 25));
         closeButton.setRequestFocusEnabled(false);
         closeButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -206,7 +201,7 @@ public class LoginFrame extends javax.swing.JFrame {
         });
         rightPanel.add(closeButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 0, -1, -1));
 
-        jPasswordField.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jPasswordField.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jPasswordField.setBorder(null);
         jPasswordField.setPreferredSize(new java.awt.Dimension(200, 30));
         jPasswordField.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -228,29 +223,12 @@ public class LoginFrame extends javax.swing.JFrame {
 
     // BEGIN - loginButton Events
     private void loginButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginButtonMouseEntered
-        loginButton.setBackground(new Color(54, 169, 112));
-        loginButton.setForeground(new Color(255, 255, 255));
+        loginButton.setBackground(new Color(0,204,204).darker());
     }//GEN-LAST:event_loginButtonMouseEntered
 
     private void loginButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginButtonMouseExited
-        loginButton.setBackground(new Color(255, 255, 255));
-        loginButton.setForeground(new Color(54, 169, 112));
+        loginButton.setBackground(new Color(0,204,204));
     }//GEN-LAST:event_loginButtonMouseExited
-
-    private void loginButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginButtonMousePressed
-        loginButton.setBackground(new Color(0, 153, 102));
-        loginButton.setForeground(new Color(255, 255, 255));
-    }//GEN-LAST:event_loginButtonMousePressed
-
-    private void loginButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginButtonMouseReleased
-        if (evt.getX() < 0 || 
-            evt.getX() > ((JLabel)evt.getSource()).getWidth() ||
-            evt.getY() < 0 || 
-            evt.getY() > ((JLabel)evt.getSource()).getHeight()) return;
-        loginButton.setBackground(new Color(54, 169, 112));
-        loginButton.setForeground(new Color(255, 255, 255));
-        initiateLoginSequence();
-    }//GEN-LAST:event_loginButtonMouseReleased
     // END - loginButton Events
     
     private void moveWindowMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_moveWindowMousePressed
@@ -276,7 +254,7 @@ public class LoginFrame extends javax.swing.JFrame {
     
     
     private void closeButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeButtonMouseEntered
-        closeButton.setBackground(Color.RED.brighter());
+        closeButton.setBackground(Color.LIGHT_GRAY);
     }//GEN-LAST:event_closeButtonMouseEntered
 
     private void closeButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeButtonMouseExited
@@ -315,20 +293,24 @@ public class LoginFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_passwordTextFieldFocusGained
 
+    private void usernameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usernameTextFieldActionPerformed
+        initiateLoginSequence();
+    }//GEN-LAST:event_usernameTextFieldActionPerformed
+
+    private void loginButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginButtonMouseClicked
+        initiateLoginSequence();
+    }//GEN-LAST:event_loginButtonMouseClicked
+
+    private void jPasswordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordFieldActionPerformed
+        initiateLoginSequence();
+    }//GEN-LAST:event_jPasswordFieldActionPerformed
+
     private void jPasswordFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPasswordFieldFocusLost
         if (jPasswordField.getText().length() == 0) { //passwordField still empty
             jPasswordField.setVisible(false);
             passwordTextField.setVisible(true);
         }
     }//GEN-LAST:event_jPasswordFieldFocusLost
-
-    private void usernameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usernameTextFieldActionPerformed
-        initiateLoginSequence();
-    }//GEN-LAST:event_usernameTextFieldActionPerformed
-
-    private void jPasswordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordFieldActionPerformed
-        initiateLoginSequence();
-    }//GEN-LAST:event_jPasswordFieldActionPerformed
 
     
     /**
