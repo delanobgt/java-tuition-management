@@ -6,11 +6,14 @@
 package tuitionmanagement;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -23,6 +26,7 @@ public class MainFrame extends javax.swing.JFrame {
     private JPanel[] sidePanels;
     private JPanel selectedSidePanel;
     private List<String> sideButtonNames;
+    private DefaultTableModel model;
     
     /**
      * Creates new form MainFrame
@@ -31,14 +35,22 @@ public class MainFrame extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         
+        //sidePanel
         selectedSidePanel = homeButton;
         sidePanels = new JPanel[] {
             homeButton,
             dataButton
         };
-        sideButtonNames = new ArrayList<String>();
+        sideButtonNames = new ArrayList<>();
         for (JPanel panel : sidePanels)
             sideButtonNames.add(panel.getName());
+        
+        //table properties
+        table.getTableHeader().setPreferredSize(new Dimension(650, 30));
+        table.getTableHeader().setBackground(Color.decode("#00cccc"));
+        table.getTableHeader().setForeground(Color.WHITE);
+        
+        model = (DefaultTableModel)table.getModel();
     }
 
     /**
@@ -68,7 +80,12 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         dataPanel = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
+        scrollPane = new javax.swing.JScrollPane();
+        table = new javax.swing.JTable();
+        exportButton = new javax.swing.JLabel();
+        addButton = new javax.swing.JLabel();
+        updateButton = new javax.swing.JLabel();
+        deleteButton = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -79,7 +96,7 @@ public class MainFrame extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(750, 500));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        windowPanel.setBackground(new java.awt.Color(51, 51, 51));
+        windowPanel.setBackground(new java.awt.Color(0, 51, 51));
         windowPanel.setPreferredSize(new java.awt.Dimension(750, 30));
         windowPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
@@ -237,12 +254,121 @@ public class MainFrame extends javax.swing.JFrame {
         dataPanel.setMaximumSize(new java.awt.Dimension(650, 470));
         dataPanel.setMinimumSize(new java.awt.Dimension(650, 470));
         dataPanel.setPreferredSize(new java.awt.Dimension(650, 470));
+        dataPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel6.setText("jLabel6");
-        jLabel6.setName("homeButton"); // NOI18N
-        dataPanel.add(jLabel6);
+        scrollPane.setBackground(new java.awt.Color(255, 255, 255));
+
+        table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Name", "Class", "Fee", "Payment Date"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                true, true, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        table.setRowHeight(30);
+        scrollPane.setViewportView(table);
+
+        dataPanel.add(scrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 0, 650, 420));
+
+        exportButton.setBackground(new java.awt.Color(0, 204, 204));
+        exportButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        exportButton.setForeground(new java.awt.Color(255, 255, 255));
+        exportButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        exportButton.setText("EXPORT TO EXCEL");
+        exportButton.setToolTipText("");
+        exportButton.setOpaque(true);
+        exportButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                exportButtonMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportButtonMouseExited(evt);
+            }
+        });
+        dataPanel.add(exportButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(505, 430, 130, 30));
+
+        addButton.setBackground(new java.awt.Color(255, 255, 255));
+        addButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        addButton.setForeground(new java.awt.Color(0, 204, 204));
+        addButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        addButton.setText("ADD");
+        addButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 204, 204), 2));
+        addButton.setOpaque(true);
+        addButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addButtonMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bottomButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bottomButtonMouseExited(evt);
+            }
+        });
+        dataPanel.add(addButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 430, 50, 30));
+
+        updateButton.setBackground(new java.awt.Color(255, 255, 255));
+        updateButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        updateButton.setForeground(new java.awt.Color(0, 204, 204));
+        updateButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        updateButton.setText("EDIT");
+        updateButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 204, 204), 2));
+        updateButton.setOpaque(true);
+        updateButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                updateButtonMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bottomButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bottomButtonMouseExited(evt);
+            }
+        });
+        dataPanel.add(updateButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 430, 50, 30));
+
+        deleteButton.setBackground(new java.awt.Color(255, 255, 255));
+        deleteButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        deleteButton.setForeground(new java.awt.Color(0, 204, 204));
+        deleteButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        deleteButton.setText("DELETE");
+        deleteButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 204, 204), 2));
+        deleteButton.setOpaque(true);
+        deleteButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                deleteButtonMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bottomButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bottomButtonMouseExited(evt);
+            }
+        });
+        dataPanel.add(deleteButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 430, 65, 30));
 
         tabbedPane.addTab("tab2", dataPanel);
+
+        tabbedPane.setSelectedIndex(1);
 
         getContentPane().add(tabbedPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(98, 5, 650, 495));
 
@@ -250,11 +376,11 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void minimizeButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_minimizeButtonMouseEntered
-        minimizeButton.setBackground(Color.decode("#333333").brighter()); 
+        minimizeButton.setBackground(Color.decode("#003333").brighter()); 
     }//GEN-LAST:event_minimizeButtonMouseEntered
 
     private void minimizeButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_minimizeButtonMouseExited
-        minimizeButton.setBackground(Color.decode("#333333"));
+        minimizeButton.setBackground(Color.decode("#003333"));
     }//GEN-LAST:event_minimizeButtonMouseExited
 
     private void minimizeButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_minimizeButtonMouseReleased
@@ -268,7 +394,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_closeButtonMouseEntered
 
     private void closeButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeButtonMouseExited
-        closeButton.setBackground(Color.decode("#333333"));
+        closeButton.setBackground(Color.decode("#003333"));
     }//GEN-LAST:event_closeButtonMouseExited
 
     private void closeButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeButtonMouseReleased
@@ -294,24 +420,58 @@ public class MainFrame extends javax.swing.JFrame {
     private void sideMenuMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sideMenuMouseEntered
         JPanel curPanel = (JPanel)evt.getSource();
         if (selectedSidePanel == curPanel) return;
-        curPanel.setBackground(Color.decode("#333333").brighter());
+        curPanel.setBackground(Color.decode("#003333").brighter());
     }//GEN-LAST:event_sideMenuMouseEntered
 
     private void sideMenuMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sideMenuMouseExited
         JPanel curPanel = (JPanel)evt.getSource();
         if (selectedSidePanel == curPanel) return;
-        curPanel.setBackground(Color.decode("#333333"));
+        curPanel.setBackground(Color.decode("#003333"));
     }//GEN-LAST:event_sideMenuMouseExited
 
     private void sideMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sideMenuMouseClicked
         for (JPanel panel : sidePanels)
-            panel.setBackground(Color.decode("#333333"));
+            panel.setBackground(Color.decode("#003333"));
         //update current selected sidePanel
         JPanel curPanel = (JPanel)evt.getSource();
         selectedSidePanel = curPanel;
         curPanel.setBackground(Color.decode("#00cccc"));
         tabbedPane.setSelectedIndex(sideButtonNames.indexOf(curPanel.getName()));
     }//GEN-LAST:event_sideMenuMouseClicked
+
+    private void bottomButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bottomButtonMouseEntered
+        ((JLabel)evt.getSource()).setBackground(Color.decode("#00cccc"));
+        ((JLabel)evt.getSource()).setForeground(Color.WHITE);
+    }//GEN-LAST:event_bottomButtonMouseEntered
+
+    private void bottomButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bottomButtonMouseExited
+        ((JLabel)evt.getSource()).setBackground(Color.WHITE);
+        ((JLabel)evt.getSource()).setForeground(Color.decode("#00cccc"));
+    }//GEN-LAST:event_bottomButtonMouseExited
+
+    private void exportButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportButtonMouseEntered
+        exportButton.setBackground(Color.decode("#00cccc").darker());
+    }//GEN-LAST:event_exportButtonMouseEntered
+
+    private void exportButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportButtonMouseExited
+        exportButton.setBackground(Color.decode("#00cccc"));
+    }//GEN-LAST:event_exportButtonMouseExited
+
+    private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
+        
+    }//GEN-LAST:event_addButtonMouseClicked
+
+    private void updateButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateButtonMouseClicked
+        
+    }//GEN-LAST:event_updateButtonMouseClicked
+
+    private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
+        
+    }//GEN-LAST:event_deleteButtonMouseClicked
+
+    private void exportButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportButtonMouseClicked
+        
+    }//GEN-LAST:event_exportButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -327,9 +487,12 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel addButton;
     private javax.swing.JLabel closeButton;
     private javax.swing.JPanel dataButton;
     private javax.swing.JPanel dataPanel;
+    private javax.swing.JLabel deleteButton;
+    private javax.swing.JLabel exportButton;
     private javax.swing.JPanel homeButton;
     private javax.swing.JPanel homePanel;
     private javax.swing.JLabel jLabel1;
@@ -337,14 +500,16 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel logoLabel;
     private javax.swing.JLabel minimizeButton;
+    private javax.swing.JScrollPane scrollPane;
     private javax.swing.JPanel sidePanel;
     private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JTable table;
     private javax.swing.JLabel titleLabel;
+    private javax.swing.JLabel updateButton;
     private javax.swing.JPanel windowPanel;
     // End of variables declaration//GEN-END:variables
 }
