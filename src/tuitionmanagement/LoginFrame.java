@@ -6,9 +6,7 @@
 package tuitionmanagement;
 
 import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import javafx.scene.input.KeyCode;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 /**
@@ -24,16 +22,21 @@ public class LoginFrame extends javax.swing.JFrame {
      */
     public LoginFrame() {
         initComponents();
+        jPasswordField.setVisible(false);
         loginButton.grabFocus();
-        setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     private void initiateLoginSequence() {
         String user = usernameTextField.getText();
         String pass = jPasswordField.getText();
-        if (user.equals("root") && pass.equals("root")) {
+        if ((new DatabaseModel(
+                "jdbc:mysql://localhost:3306/tuition",
+                user,
+                pass)).isLoginSuccessful()) {
             this.setVisible(false);
-            MainFrame.createAndShowGUI();
+            MainFrame.createAndShowGUI(user, pass);
         }
     }
     
@@ -148,9 +151,13 @@ public class LoginFrame extends javax.swing.JFrame {
         });
         rightPanel.add(passwordTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 202, -1, -1));
 
+        jSeparator1.setBackground(new java.awt.Color(204, 204, 204));
+        jSeparator1.setForeground(new java.awt.Color(255, 255, 255));
         jSeparator1.setPreferredSize(new java.awt.Dimension(200, 10));
-        rightPanel.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 175, -1, -1));
+        rightPanel.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 176, -1, -1));
 
+        jSeparator2.setBackground(new java.awt.Color(204, 204, 204));
+        jSeparator2.setForeground(new java.awt.Color(255, 255, 255));
         jSeparator2.setPreferredSize(new java.awt.Dimension(200, 10));
         rightPanel.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 232, -1, -1));
 
@@ -317,29 +324,6 @@ public class LoginFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(LoginFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(LoginFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(LoginFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(LoginFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             new LoginFrame().setVisible(true);

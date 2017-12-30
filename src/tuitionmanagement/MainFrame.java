@@ -9,10 +9,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -20,20 +22,22 @@ import javax.swing.table.DefaultTableModel;
  * @author irvin
  */
 public class MainFrame extends javax.swing.JFrame {
-
+    
     private int relativeX = -1;
     private int relativeY = -1;
     private JPanel[] sidePanels;
     private JPanel selectedSidePanel;
     private List<String> sideButtonNames;
-    private DefaultTableModel model;
-    
+    private DefaultTableModel tableModel;
+    private DatabaseModel dbModel;
+            
     /**
      * Creates new form MainFrame
      */
-    public MainFrame() {
+    public MainFrame(String user, String pass) {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //sidePanel
         selectedSidePanel = homeButton;
@@ -50,9 +54,95 @@ public class MainFrame extends javax.swing.JFrame {
         table.getTableHeader().setBackground(Color.decode("#00cccc"));
         table.getTableHeader().setForeground(Color.WHITE);
         
-        model = (DefaultTableModel)table.getModel();
+        tableModel = (DefaultTableModel)table.getModel();
+        dbModel = new DatabaseModel(
+                "jdbc:mysql://localhost:3306/tuition",
+                user,
+                pass
+        );
+        refillTable();
     }
 
+    //my private method
+    private void refillTable() {
+        tableModel.setRowCount(0);
+        List<Student> students = dbModel.getProductList();
+        for (Student student : students) {
+            tableModel.addRow(student.getContentAsArray());
+        }
+    }
+    
+    private Student showStudentDataEntryDialog() {
+        Student student = null;
+        JTextField name = new JTextField();
+        JTextField grade = new JTextField();
+        JTextField fee = new JTextField();
+        JTextField paymentDate = new JTextField();
+        final JComponent[] inputs = new JComponent[] {
+                new JLabel("Name (String)"),
+                name,
+                new JLabel("Grade (String, ex:\"SD-1\""),
+                grade,
+                new JLabel("Fee (Integer)"),
+                fee,
+                new JLabel("Payment Date (String(DD-MM-YYYY), ex:\"23-04-1999\""),
+                paymentDate
+        };
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                inputs,
+                "Student Data Entry",
+                JOptionPane.YES_NO_OPTION
+        );
+        if (result == JOptionPane.YES_OPTION) {
+            student = new Student(
+                    name.getText(),
+                    grade.getText(),
+                    Integer.parseInt(fee.getText()),
+                    paymentDate.getText()
+            );
+        }
+        return student;
+    }
+    
+    private Student showStudentDataUpdateDialog(Student student) {
+        Student newStudent = null;
+        JTextField id = new JTextField(String.valueOf(student.getId()));
+        id.setEditable(false);
+        JTextField name = new JTextField(student.getName());
+        JTextField grade = new JTextField(student.getGrade());
+        JTextField fee = new JTextField(String.valueOf(student.getFee()));
+        JTextField paymentDate = new JTextField(student.getPaymentDate());
+        final JComponent[] inputs = new JComponent[] {
+                new JLabel("ID (Integer)"),
+                id,
+                new JLabel("Name (String)"),
+                name,
+                new JLabel("Grade (String, ex:\"SD-1\""),
+                grade,
+                new JLabel("Fee (Integer)"),
+                fee,
+                new JLabel("Payment Date (String(DD-MM-YYYY), ex:\"23-04-1999\""),
+                paymentDate
+        };
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                inputs,
+                "Student Data Update",
+                JOptionPane.YES_NO_OPTION
+        );
+        if (result == JOptionPane.YES_OPTION) {
+            newStudent = new Student(
+                    student.getId(),
+                    name.getText(),
+                    grade.getText(),
+                    Integer.parseInt(fee.getText()),
+                    paymentDate.getText()
+            );
+        }
+        return newStudent;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -266,16 +356,9 @@ public class MainFrame extends javax.swing.JFrame {
                 "ID", "Name", "Class", "Fee", "Payment Date"
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
-            };
             boolean[] canEdit = new boolean [] {
-                true, true, false, false, true
+                false, false, false, false, false
             };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -368,8 +451,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         tabbedPane.addTab("tab2", dataPanel);
 
-        tabbedPane.setSelectedIndex(1);
-
         getContentPane().add(tabbedPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(98, 5, 650, 495));
 
         pack();
@@ -458,31 +539,50 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_exportButtonMouseExited
 
     private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
-        
+        Student newStudent = showStudentDataEntryDialog();
+        if (newStudent != null) {
+            dbModel.add(newStudent);
+            refillTable();
+        }
     }//GEN-LAST:event_addButtonMouseClicked
 
     private void updateButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateButtonMouseClicked
-        
+        int row = table.getSelectedRow();
+        if (row != -1) {
+            Student student = showStudentDataUpdateDialog(
+                    dbModel.getProductList().get(row)
+            );
+            if (student != null) {
+                dbModel.update(student);
+                refillTable();
+            }
+        }
     }//GEN-LAST:event_updateButtonMouseClicked
 
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
-        
+        int row = table.getSelectedRow();
+        if (row != -1) {
+            int id = (Integer)tableModel.getValueAt(row, 0);
+            int result = JOptionPane.showConfirmDialog(
+                    null,
+                    "Delete Student #"+id+" ?",
+                    "Delete Record",
+                    JOptionPane.YES_NO_OPTION
+            );
+            if (result == JOptionPane.YES_OPTION) {
+                dbModel.delete(id);
+                refillTable();
+            }
+        }
     }//GEN-LAST:event_deleteButtonMouseClicked
 
     private void exportButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportButtonMouseClicked
         
     }//GEN-LAST:event_exportButtonMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        createAndShowGUI();
-    }
-
-    public static void createAndShowGUI() {
+    public static void createAndShowGUI(String user, String pass) {
         java.awt.EventQueue.invokeLater(() -> {
-            new MainFrame().setVisible(true);
+            new MainFrame(user, pass).setVisible(true);
         });
     }
     
